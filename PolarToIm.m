@@ -13,8 +13,8 @@ function imR = PolarToIm (imP, rMin, rMax, Mr, Nr)
 % points not between rMin and rMax are rendered as zero. The output is a Mr
 % x Nr grayscale image (with double values between 0.0 and 1.0).
 
-
-imR = uint8(zeros(Mr, Nr));
+imP = imP(:,:,1);
+imR = uint8(zeros(Mr, Nr, 1));
 Om = (Mr+1)/2; % co-ordinates of the center of the image
 On = (Nr+1)/2;
 sx = (Mr-1)/2; % scale factors

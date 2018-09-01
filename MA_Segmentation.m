@@ -33,14 +33,10 @@ INDICADOR_NAME = 'varianza'; %Cambio respecto a MA
 
 for f=1:1:COUNT_FRAMES
     frame = strcat(PATH_FRAMES,frames(f,1).name);
-    if isempty(regexp(frame,'\/\d+_polar_1.png','match')) == 1
+    if isempty(regexp(frame,'\/\d+_polar_1.png$','match')) == 1
         continue;
     end
     
-    if isempty(regexp(frame,'\/00_polar_1.png','match')) ~= 1
-        continue;
-    end
-
     ivus_polares_original = imread(frame);
     ivus_polares = ivus_polares_original(:,:,1);
     
@@ -58,20 +54,23 @@ for f=1:1:COUNT_FRAMES
 
    
     %Curve fitting
-    step = pi / 512;
-    timevec=0:step:pi;
+    step = 2*pi / 512;
+    timevec=0:step:2*pi;
     xSin=timevec(1:512);
     ySin =tmp.alturas;
     
-    [fitresult, gof] = functionFourier2(xSin, ySin);
+    [fitresult, gof] = functionFourier1(xSin, ySin);
     
     yFitted = fitresult(xSin);
 
     marcas = marca_experto(frame,'_M');    
 
-    resultado = pintar_polares(173,512,marcas,ivus_polares_original,[0,255,0]);    
+    resultado = pintar_polares(marcas,ivus_polares_original,[0,255,0]);    
 
-    segmentation = pintar_polares(173,512,yFitted,resultado,[255,0,0]);
+    segmentation = pintar_polares(yFitted,resultado,[255,0,0]);
+    tmp2 = uint8(zeros(192,512,3));
+    tmp2(20:192,:,:) = segmentation;
+    segmentation = tmp2;
     figure;imshow(segmentation,[]);
 
     lado = 384;
@@ -81,7 +80,6 @@ for f=1:1:COUNT_FRAMES
     out(:,:,3) = PolarToIm(segmentation(:,:,3),0,1,lado,lado);        
 
     figure;imshow(out,[]);
-    pause;
     close all;
     
 end
