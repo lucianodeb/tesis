@@ -4,7 +4,9 @@ frame = regexp(frame,'\d+_polar_\d+','match');
 ROOT = strcat(pwd,'/INDICADORES/');
 folder = strcat(ROOT,frame);
 folder = folder{1,1};
-mkdir(folder);
+if ~exist(folder, 'dir')
+  mkdir(folder);
+end
 
 destino = strcat(ROOT,frame,'/','indicadores_v',int2str(coeficiente_ventana),'y',int2str(disty),'x',int2str(distx),'.mat');
 destino = destino{1,1};

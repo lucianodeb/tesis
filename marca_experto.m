@@ -1,6 +1,7 @@
 function M = marca_experto(frame,membrana)
     frame = strrep(frame,'_1',membrana);
     I = imread(frame);
+    I = I(:,:,1);
     [F,C] = size(I);        
     out = uint8(ones(C,1));
     for i=1:1:F-1

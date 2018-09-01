@@ -27,12 +27,12 @@ opts.StartPoint = [0 0 0 0 0 2.00391389432485];
 [fitresult, gof] = fit( xData, yData, ft, opts );
 
 % Plot fit with data.
-figure( 'Name', 'untitled fit 1' );
-h = plot( fitresult, xData, yData );
-legend( h, 'ySin vs. xSin', 'untitled fit 1', 'Location', 'NorthEast' );
-% Label axes
-xlabel xSin
-ylabel ySin
-grid on
+% figure( 'Name', 'untitled fit 1' );
+% h = plot( fitresult, xData, yData );
+% legend( h, 'ySin vs. xSin', 'untitled fit 1', 'Location', 'NorthEast' );
+% % Label axes
+% xlabel xSin
+% ylabel ySin
+% grid on
 
 

@@ -37,7 +37,7 @@ for f=1:1:COUNT_FRAMES
         continue;
     end
     
-    ivus_polares_original = imread(frame);    
+    ivus_polares_original = imread(frame);
     ivus_polares = ivus_polares_original(:,:,1);
     
     % Obtenemos los haralick_features de la imagen IVUS convertida a polares con: x, y y la VENTANA
@@ -93,15 +93,26 @@ for f=1:1:COUNT_FRAMES
     resultado = pintar_polares(173,512,marcas,ivus_polares_original,[0,255,0]);    
 
     segmentation = pintar_polares(173,512,yFitted2,resultado,[255,0,0]);
-    figure;imshow(segmentation,[]);
+    %figure;imshow(segmentation,[]);
 
+    lado = 384;
+    out = uint8(ones(lado,lado,3));
+%     out(:,:,1) = PolarToIm(segmentation(:,:,1),0,1,lado,lado);        
+%     out(:,:,2) = PolarToIm(segmentation(:,:,2),0,1,lado,lado);        
+%     out(:,:,3) = PolarToIm(segmentation(:,:,3),0,1,lado,lado);        
+% 
+    Hausdorff = HausdorffDist(pares(marcas),pares(yFitted2));
+    if Hausdorff < 30
+        continue;
+    end
+    disp(strcat('Hausdorff : ',' ', num2str(Hausdorff),' ' ,frame));
     lado = 384;
     out = uint8(ones(lado,lado,3));
     out(:,:,1) = PolarToIm(segmentation(:,:,1),0,1,lado,lado);        
     out(:,:,2) = PolarToIm(segmentation(:,:,2),0,1,lado,lado);        
     out(:,:,3) = PolarToIm(segmentation(:,:,3),0,1,lado,lado);        
-
     figure;imshow(out,[]);
+
     pause;
 
     close all;

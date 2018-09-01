@@ -12,7 +12,7 @@ alturas = [1,t2];
 medias = [1,t2];
 S = 15;
 W = ones(S) ./ (S*S);
-media = conv2(ivus_polares,W);
+media = conv2(single(ivus_polares),single(W));
 
 for i=1:1:t2
     maxi = ones(1,4);
