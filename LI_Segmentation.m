@@ -27,16 +27,27 @@ Y = 2;
 X = 3;
 LARGO = 10;
 INDICADOR_NAME = 'contraste'; %Cambio respecto a MA
+count = 1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 for f=1:1:COUNT_FRAMES
     frame = strcat(PATH_FRAMES,frames(f,1).name);
-    if isempty(regexp(frame,'\/\d+_polar_1.png','match')) == 1
+    if isempty(regexp(frame,'\/\d+_polar_1.png$','match')) == 1
+        continue;
+    end
+    if exist(strcat(frame,'_result_LI.png'), 'file') == 2
         continue;
     end
     
+    if frame == '/Volumes/Externo/Tesis/tesis/frames/266_polar_1.png'
+        continue
+    end
+    if frame == '/Volumes/Externo/Tesis/tesis/frames/297_polar_1.png'
+        continue
+    end
+    frame
     ivus_polares_original = imread(frame);
     ivus_polares = ivus_polares_original(:,:,1);
     
@@ -54,12 +65,12 @@ for f=1:1:COUNT_FRAMES
 
    
     %Curve fitting
-    step = pi / 512;
-    timevec=0:step:pi;
+    step = 2*pi / 512;
+    timevec=0:step:2*pi;
     xSin=timevec(1:512);
     ySin =tmp.alturas;
     
-    [fitresult, gof] = functionFourier2(xSin, ySin);
+    [fitresult, gof] = functionFourier1(xSin, ySin);
     
     yFitted = fitresult(xSin);
     
@@ -84,36 +95,32 @@ for f=1:1:COUNT_FRAMES
         
     end
     
-    [fitresult, gof] = functionFourier2(xSinModif, ySinModif);
+    [fitresult, gof] = functionFourier1(xSinModif, ySinModif);
     
     yFitted2 = fitresult(xSin);
 
     marcas = marca_experto(frame,'_L');    
 
-    resultado = pintar_polares(173,512,marcas,ivus_polares_original,[0,255,0]);    
+%     JI = jaccard(frame,'_M',tmp.alturas);
+%     jaccards(1,count) = JI;
+%     Hausdorff = HausdorffDist(pares(marcas),pares(yFitted));
+%     hausdorff(1,count) = Hausdorff;
+%     count = count+1;
+%     continue;
 
-    segmentation = pintar_polares(173,512,yFitted2,resultado,[255,0,0]);
-    %figure;imshow(segmentation,[]);
+    resultado = pintar_polares(marcas,ivus_polares_original,[0,255,0]);        
+    segmentation = pintar_polares(yFitted2,resultado,[255,0,0]);
+    tmp2 = uint8(zeros(192,512,3));
+    tmp2(20:192,:,:) = segmentation;
+    segmentation = tmp2;
+    
 
     lado = 384;
-    out = uint8(ones(lado,lado,3));
-%     out(:,:,1) = PolarToIm(segmentation(:,:,1),0,1,lado,lado);        
-%     out(:,:,2) = PolarToIm(segmentation(:,:,2),0,1,lado,lado);        
-%     out(:,:,3) = PolarToIm(segmentation(:,:,3),0,1,lado,lado);        
-% 
-    Hausdorff = HausdorffDist(pares(marcas),pares(yFitted2));
-    if Hausdorff < 30
-        continue;
-    end
-    disp(strcat('Hausdorff : ',' ', num2str(Hausdorff),' ' ,frame));
-    lado = 384;
-    out = uint8(ones(lado,lado,3));
     out(:,:,1) = PolarToIm(segmentation(:,:,1),0,1,lado,lado);        
     out(:,:,2) = PolarToIm(segmentation(:,:,2),0,1,lado,lado);        
     out(:,:,3) = PolarToIm(segmentation(:,:,3),0,1,lado,lado);        
-    figure;imshow(out,[]);
-
-    pause;
+    
+    imwrite(mat2gray(out),strcat(frame,'_result_LI.png'));
 
     close all;
 end

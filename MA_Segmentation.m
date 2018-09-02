@@ -39,10 +39,6 @@ for f=1:1:COUNT_FRAMES
         continue;
     end
     
-    if isempty(regexp(frame,'\/00_polar_1.png','match')) ~= 1
-        continue;
-    end
-
     ivus_polares_original = imread(frame);
     ivus_polares = ivus_polares_original(:,:,1);
     
@@ -59,44 +55,35 @@ for f=1:1:COUNT_FRAMES
 
    
     %Curve fitting
-    step = pi / 512;
-    timevec=0:step:pi;
+    step = 2*pi / 512;
+    timevec=0:step:2*pi;
     xSin=timevec(1:512);
     ySin =tmp.alturas;
     
-    [fitresult, gof] = functionFourier4(xSin, ySin);
+    [fitresult, gof] = functionFourier1(xSin, ySin);
     
     yFitted = fitresult(xSin);
     
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
-     ySin =vertcat(yFitted(257:512,1),yFitted(1:256,1));
-     ySin = ySin';
-     [fitresult, gof] = functionFourier4(xSin, ySin);    
-     yFitted_sec = fitresult(xSin);
-     yFitted(1:128,1) = yFitted_sec(257:384,1);
-     yFitted(385:512,1) = yFitted_sec(129:256,1);
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
-
     marcas = marca_experto(frame,'_M');    
     
-    JI = jaccard(frame,'_M',tmp.alturas);
-    jaccards(1,count) = JI;
-     Hausdorff = HausdorffDist(pares(marcas),pares(yFitted));
-     hausdorff(1,count) = Hausdorff;
-     disp(strcat('Hausdorff : ',' ', num2str(Hausdorff),' ' ,frame));
-    count = count +1;
-    
-    continue;
-    resultado = pintar_polares(173,512,marcas,ivus_polares_original,[0,255,0]);    
+%     JI = jaccard(frame,'_M',tmp.alturas);
+%     jaccards(1,count) = JI;
+%     Hausdorff = HausdorffDist(pares(marcas),pares(yFitted));
+%     hausdorff(1,count) = Hausdorff;
+%     count = count+1;
+%     continue;
+    resultado = pintar_polares(marcas,ivus_polares_original,[0,255,0]);    
 
-    segmentation = pintar_polares(173,512,yFitted,resultado,[255,0,0]);
+    segmentation = pintar_polares(yFitted,resultado,[255,0,0]);
+    tmp2 = uint8(zeros(192,512,3));
+    tmp2(20:192,:,:) = segmentation;
+    segmentation = tmp2;
 
     lado = 384;
     out = uint8(ones(lado,lado,3));
     out(:,:,1) = PolarToIm(segmentation(:,:,1),0,1,lado,lado);        
     out(:,:,2) = PolarToIm(segmentation(:,:,2),0,1,lado,lado);        
     out(:,:,3) = PolarToIm(segmentation(:,:,3),0,1,lado,lado);        
-    imwrite(mat2gray(out),strcat(frame,'_result.png'));
+    imwrite(mat2gray(out),strcat(frame,'_result_MA.png'));
     close all;    
 end
