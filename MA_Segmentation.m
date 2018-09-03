@@ -66,15 +66,18 @@ for f=1:1:COUNT_FRAMES
     
     marcas = marca_experto(frame,'_M');    
     
-%     JI = jaccard(frame,'_M',tmp.alturas);
-%     jaccards(1,count) = JI;
-%     Hausdorff = HausdorffDist(pares(marcas),pares(yFitted));
-%     hausdorff(1,count) = Hausdorff;
-%     count = count+1;
-%     continue;
+    %%Obtengo Metricas %%
+    JI = jaccard(frame,'_M',tmp.alturas);
+    jaccards(1,count) = JI;
+    Hausdorff = HausdorffDist(pares(marcas),pares(yFitted));
+    hausdorff(1,count) = Hausdorff;
+    count = count+1;
+    
     resultado = pintar_polares(marcas,ivus_polares_original,[0,255,0]);    
-
     segmentation = pintar_polares(yFitted,resultado,[255,0,0]);
+    
+    %%Completo los pixels correspondinetes al cateter, as? puedo
+    %%reconstruir a cartesianas.
     tmp2 = uint8(zeros(192,512,3));
     tmp2(20:192,:,:) = segmentation;
     segmentation = tmp2;
@@ -84,6 +87,8 @@ for f=1:1:COUNT_FRAMES
     out(:,:,1) = PolarToIm(segmentation(:,:,1),0,1,lado,lado);        
     out(:,:,2) = PolarToIm(segmentation(:,:,2),0,1,lado,lado);        
     out(:,:,3) = PolarToIm(segmentation(:,:,3),0,1,lado,lado);        
-    imwrite(mat2gray(out),strcat(frame,'_result_MA.png'));
+    imshow(out,[]);
+    %imwrite(mat2gray(out),strcat(frame,'_result_MA.png'));
+    pause;
     close all;    
 end

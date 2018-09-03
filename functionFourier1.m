@@ -27,15 +27,5 @@ ptrFunc = @(a0,a1,b1,x) a0 + a1*cos(x*w) + b1*sin(x*w);
 
 [fitresult, gof] = fit(xData, yData, ptrFunc);
 
-%disp('nuevo fourier')
-%coeffvalues(fitresult)
-figure( 'Name', 'untitled fit 1' );
-h = plot( fitresult, xData, yData );
-legend( h, 'ySin vs. xSin', 'untitled fit 1', 'Location', 'NorthEast' );
-% Label axes
-xlabel xSin
-ylabel ySin
-grid on
-
 
 

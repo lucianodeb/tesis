@@ -37,17 +37,7 @@ for f=1:1:COUNT_FRAMES
     if isempty(regexp(frame,'\/\d+_polar_1.png$','match')) == 1
         continue;
     end
-    if exist(strcat(frame,'_result_LI.png'), 'file') == 2
-        continue;
-    end
     
-    if frame == '/Volumes/Externo/Tesis/tesis/frames/266_polar_1.png'
-        continue
-    end
-    if frame == '/Volumes/Externo/Tesis/tesis/frames/297_polar_1.png'
-        continue
-    end
-    frame
     ivus_polares_original = imread(frame);
     ivus_polares = ivus_polares_original(:,:,1);
     
@@ -100,27 +90,29 @@ for f=1:1:COUNT_FRAMES
     yFitted2 = fitresult(xSin);
 
     marcas = marca_experto(frame,'_L');    
-
-%     JI = jaccard(frame,'_M',tmp.alturas);
-%     jaccards(1,count) = JI;
-%     Hausdorff = HausdorffDist(pares(marcas),pares(yFitted));
-%     hausdorff(1,count) = Hausdorff;
-%     count = count+1;
-%     continue;
+    
+    %%Obtengo Metricas %%
+    JI = jaccard(frame,'_L',tmp.alturas);
+    jaccards(1,count) = JI;
+    Hausdorff = HausdorffDist(pares(marcas),pares(yFitted));
+    hausdorff(1,count) = Hausdorff;
+    count = count+1;
 
     resultado = pintar_polares(marcas,ivus_polares_original,[0,255,0]);        
     segmentation = pintar_polares(yFitted2,resultado,[255,0,0]);
+    %%Completo los pixels correspondinetes al cateter, as? puedo
+    %%reconstruir a cartesianas.
     tmp2 = uint8(zeros(192,512,3));
     tmp2(20:192,:,:) = segmentation;
     segmentation = tmp2;
-    
 
     lado = 384;
+    out = uint8(ones(lado,lado,3));
     out(:,:,1) = PolarToIm(segmentation(:,:,1),0,1,lado,lado);        
     out(:,:,2) = PolarToIm(segmentation(:,:,2),0,1,lado,lado);        
     out(:,:,3) = PolarToIm(segmentation(:,:,3),0,1,lado,lado);        
+    imshow(out,[]);    
+    pause;
     
-    imwrite(mat2gray(out),strcat(frame,'_result_LI.png'));
-
     close all;
 end
