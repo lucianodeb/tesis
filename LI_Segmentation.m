@@ -94,7 +94,7 @@ for f=1:1:COUNT_FRAMES
     %%Obtengo Metricas %%
     JI = jaccard(frame,'_L',tmp.alturas);
     jaccards(1,count) = JI;
-    Hausdorff = HausdorffDist(pares(marcas),pares(yFitted));
+    Hausdorff = HausdorffDist(pares(marcas),pares(yFitted2));
     hausdorff(1,count) = Hausdorff;
     count = count+1;
 
