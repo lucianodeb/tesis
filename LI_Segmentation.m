@@ -34,7 +34,7 @@ count = 1;
 
 for f=1:1:COUNT_FRAMES
     frame = strcat(PATH_FRAMES,frames(f,1).name);
-    if isempty(regexp(frame,'\/\d+_polar_1.png$','match')) == 1
+    if isempty(regexp(frame,'\/\d{1,3}_polar_1.png$','match')) == 1
         continue;
     end
     
@@ -64,9 +64,6 @@ for f=1:1:COUNT_FRAMES
     
     yFitted = fitresult(xSin);
     
-%     figure('Name','gradiente solo'); imshow(ivus_polares);
-%     hold on; plot(xSin/step,yFitted,'g'); hold off;
-    
 %    -------MODIFICACION SEGUN EL VALOR DE INDICADOR POR ENCIMA----------
         
     thContraste = 0.4;
@@ -92,7 +89,7 @@ for f=1:1:COUNT_FRAMES
     marcas = marca_experto(frame,'_L');    
     
     %%Obtengo Metricas %%
-    JI = jaccard(frame,'_L',tmp.alturas);
+    JI = jaccard(frame,'_L',yFitted2');
     jaccards(1,count) = JI;
     Hausdorff = HausdorffDist(pares(marcas),pares(yFitted2));
     hausdorff(1,count) = Hausdorff;

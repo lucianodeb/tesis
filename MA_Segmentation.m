@@ -30,12 +30,12 @@ INDICADOR_NAME = 'varianza'; %Cambio respecto a MA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 count = 1;
-hausdorff = ones(1,177);
-jaccards = ones(1,177);
+hausdorff = ones(1,169);
+jaccards = ones(1,169);
 
 for f=1:1:COUNT_FRAMES
     frame = strcat(PATH_FRAMES,frames(f,1).name);
-    if isempty(regexp(frame,'\/\d+_polar_1.png$','match')) == 1
+    if isempty(regexp(frame,'\/\d{1,3}_polar_1.png$','match')) == 1
         continue;
     end
     
@@ -67,12 +67,12 @@ for f=1:1:COUNT_FRAMES
     marcas = marca_experto(frame,'_M');    
     
     %%Obtengo Metricas %%
-    JI = jaccard(frame,'_M',tmp.alturas);
+    JI = jaccard(frame,'_M',yFitted');
     jaccards(1,count) = JI;
     Hausdorff = HausdorffDist(pares(marcas),pares(yFitted));
     hausdorff(1,count) = Hausdorff;
     count = count+1;
-    
+
     resultado = pintar_polares(marcas,ivus_polares_original,[0,255,0]);    
     segmentation = pintar_polares(yFitted,resultado,[255,0,0]);
     
